@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <title>Shopping Cart</title>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet" />
+   <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+   <section>
+      <div class="container">
+         <div class="cart">
+            <div class="col-md-12 col-lg-10 mx-auto">
+               <div id="phoneGroup" class="cart-item">
+                  <div class="row">
+                     <div class="col-md-7 center-item">
+                        <img src="images/product-1.png" alt="">
+                        <h5>iPhone 11 128GB Black</h5>
+                     </div>
+
+                     <div class="col-md-5 center-item">
+                        <div class="input-group number-spinner">
+                           <button id="decBtn1" class="btn btn-default"><i class="fas fa-minus"></i></button>
+                           <input id="inputQuantity1" type="text" class="form-control text-center" value="1">
+                           <button id="incBtn1" class="btn btn-default"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <h5> $ <span id="showAmount-1"> 1219</span></h5>
+                        <img id="remove-item1" src="images/remove.png" alt="" class="remove-item">
+                     </div>
+                  </div>
+               </div>
+
+               <div id="caseGroup" class="cart-item">
+                  <div class="row">
+                     <div class="col-md-7 center-item mx-auto">
+                        <img src="images/product-2.png" alt="">
+                        <h5>iPhone 11 Silicone Case - Black</h5>
+                     </div>
+                     <div class="col-md-5 center-item">
+                        <div class="input-group number-spinner">
+                           <button id="decBtn2" class="btn btn-default decBtn"><i class="fas fa-minus"></i></button>
+                           <input id="inputQuantity2" type="text" class="form-control text-center" value="1">
+                           <button id="incBtn2" class="btn btn-default"><i class="fas fa-plus"></i></button>
+
+                        </div>
+                        <h5>$ <span id="showAmount-2">59</span></h5>
+                        <img id="remove-item2" src="images/remove.png" alt="" class="remove-item">
+                     </div>
+                  </div>
+               </div>
+
+               <div class="cart-item">
+                  <div class="row">
+
+                     <div class="col-md-8">
+                        <h5>Subtotal: </h5>
+                        <h5>Tax:</h5>
+                        <h5>Total:</h5>
+                     </div>
+
+                     <div class="col-md-4 status">
+                        <h5>$<span id="showSubTotal">1,278</span></h5>
+                        <h5>$0</h5>
+                        <h5>$ <span id="total">1,278</span></h5>
+                     </div>
+                  </div>
+               </div>
+               <div class="col-md-12 pt-4 pb-4">
+                  <button id="checkoutBtn" type="button" class="btn btn-success check-out">Check Out</button>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+
+   <script>
+
+      const inp1 = document.getElementById('inputQuantity1');
+      const inp2 = document.getElementById('inputQuantity2');
+      const show1 = document.getElementById('showAmount-1');
+      const show2 = document.getElementById('showAmount-2');
+      const subTotal = document.getElementById('showSubTotal');
+      const total = document.getElementById('total');
+      const decBtn1 = document.getElementById('decBtn1');
+      const decBtn2 = document.getElementById('decBtn2');
+      const incBtn1 = document.getElementById('incBtn1');
+      const incBtn2 = document.getElementById('incBtn2');
+      const phoneGroup = document.getElementById('phoneGroup');
+      const caseGroup = document.getElementById('caseGroup');
+      const checkOutBtn = document.getElementById('checkoutBtn');
+
+
+      renderAll();
+
+      //all execution
+      function renderAll() {
+         quantity('inputQuantity1', 'showAmount-1');
+         quantity('inputQuantity2', 'showAmount-2');
+
+         deleteItem('remove-item1', 'phoneGroup');
+         deleteItem('remove-item2', 'caseGroup');
+
+         checkOutBtn.addEventListener('click', function (event) {
+            const value1 = parseInt(show1.innerText);
+            const value2 = parseInt(show2.innerText);
+            calSubTotal(value1, value2);
+         });
+      }
+
+      // calculating if user give direct input through input box
+      function inputCal(value, firstId, secondId) {
+         document.getElementById(firstId).addEventListener('input', function (event) {
+            let input = document.getElementById(firstId).value;
+            let cal = input * value;
+            if (cal <= 0) {
+               cal = 0;
+            }
+            document.getElementById(secondId).innerText = cal;
+         });
+      }
+
+      //incrementing or decrementing quantity by buttons
+      function quantity(firstId, secondId) {
+         let amount1, amount2;
+
+         if (secondId == 'showAmount-1') {
+            const initValue1 = 1219;
+            inputCal(initValue1, firstId, secondId);
+            amount1 = document.getElementById(firstId).value;
+            amount2 = amount1 * initValue1;
+            show1.innerText = amount2;
+
+            amount1 = calTemp('decBtn1', firstId, secondId, initValue1);
+            amount1 = calTemp('incBtn1', firstId, secondId, initValue1);
+            // return amount1;
+
+         } else {
+            const initValue2 = 59;
+            inputCal(59, firstId, secondId);
+            amount1 = document.getElementById(firstId).value;
+            amount2 = amount1 * initValue2;
+            show2.innerText = amount2;
+
+            amount2 = calTemp('decBtn2', firstId, secondId, initValue2);
+            amount2 = calTemp('incBtn2', firstId, secondId, initValue2);
+            // return amount2;
+         }
+      }
+
+      function calTemp(btnType, firstId, secondId, initValue) {
+
+         let amount, quantity;
+
+         if (btnType == 'decBtn1' || btnType == 'decBtn2') {
+            document.getElementById(btnType).addEventListener('click', function () {
+               quantity = document.getElementById(firstId).value;
+               if (quantity <= 0) {
+                  quantity = 1;
+               }
+               quantity--;
+               document.getElementById(firstId).value = quantity;
+               amount = quantity * initValue;
+               document.getElementById(secondId).innerText = amount;
+            });
+         } else {
+            document.getElementById(btnType).addEventListener('click', function () {
+               quantity = document.getElementById(firstId).value;
+               quantity++;
+               document.getElementById(firstId).value = quantity;
+               amount = quantity * initValue;
+               document.getElementById(secondId).innerText = amount;
+            });
+         }
+         // return amount;
+      }
+
+      //total and subtotal calculation
+      function calSubTotal(inp1, inp2) {
+         var tempSubTotal = inp1 + inp2;
+
+         subTotal.innerText = tempSubTotal;
+         total.innerText = tempSubTotal;
+
+      }
+
+      //delete items
+      function deleteItem(id, type) {
+         document.getElementById(id).addEventListener('click', function () {
+            document.getElementById(type).style.display = 'none';
+
+            if (document.getElementById('phoneGroup').style.display == 'none' && document.getElementById('caseGroup').style.display == 'none') {
+               show1.innerText = 0;
+               show2.innerText = 0;
+            } else if (phoneGroup.style.display == 'none') {
+               show1.innerText = 0;
+            } else if (caseGroup.style.display == 'none') {
+               show2.innerText = 0;
+            }
+         });
+      }
+
+   </script>
+</body>
+
+</html>
